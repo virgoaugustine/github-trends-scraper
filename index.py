@@ -1,7 +1,10 @@
 import requests
 from bs4 import BeautifulSoup as bs
 import csv
+from googletrans import Translator
 
+
+translator = Translator()
 page = requests.get("https://github.com/trending")
 soup = bs(page.text, 'html.parser')
 
@@ -19,6 +22,10 @@ for repo in repo_list:
     developer_name = full_repo_name[0].strip()
     repo_name = full_repo_name[1].strip()
     repo_description = repo.find('p').text.strip()
+     #Use translator to translate descriptions that are not in English.
+    repo_description = translator.translate(repo_description, dest='en').text
+    
+   
     #I could not find a way to extract the URL from the HREF text So I came up with this hack. 
     #Will probably find a better solution later.
     repo_link = "https://github.com" + repo.find('h1').find('a').get('href')
